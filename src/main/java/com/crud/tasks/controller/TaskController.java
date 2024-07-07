@@ -1,9 +1,11 @@
 package com.crud.tasks.controller;
 
+import com.crud.tasks.domain.Task;
 import com.crud.tasks.domain.TaskDto;
 import com.crud.tasks.mapper.TaskMapper;
 import com.crud.tasks.service.DbService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class TaskController {
         this.service = service;
         this.taskMapper = taskMapper;
     }
+
     @GetMapping
     public List<TaskDto> getTasks() {
         return new ArrayList<>();
@@ -32,13 +35,16 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    public void deleteTask(@PathVariable Long taskId) {
-        // code to delete the task
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+        service.deleteTaskById(taskId);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping
-    public TaskDto updateTask(@RequestBody TaskDto taskDto) {
-        return new TaskDto(1L, "Edited test title", "Test content");
+    public ResponseEntity<TaskDto> updateTask(@RequestBody TaskDto taskDto) {
+        Task task = taskMapper.mapToTask(taskDto);
+        Task savedTask = service.saveTask(task);
+        return ResponseEntity.ok(taskMapper.mapToTaskDto(savedTask));
     }
 
     @PostMapping
