@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 public class TaskMapper {
 
     public Task mapToTask(final TaskDto taskDto) {
-        if (taskDto == null) {
-            return null;
-        }
         return new Task(
                 taskDto.getId(),
                 taskDto.getTitle(),
@@ -22,9 +19,6 @@ public class TaskMapper {
     }
 
     public TaskDto mapToTaskDto(final Task task) {
-        if (task == null) {
-            return null;
-        }
         return new TaskDto(
                 task.getId(),
                 task.getTitle(),
@@ -33,9 +27,6 @@ public class TaskMapper {
     }
 
     public List<TaskDto> mapToTaskDtoList(final List<Task> taskList) {
-        if (taskList == null) {
-            return null;
-        }
         return taskList.stream()
                 .map(this::mapToTaskDto)
                 .collect(Collectors.toList());
