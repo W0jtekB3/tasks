@@ -29,6 +29,7 @@ public class TrelloController {
             });
         });
     }
+
     @PostMapping("cards")
     public CreatedTrelloCard createTrelloCard(@RequestBody TrelloCardDto trelloCardDto) {
         return trelloClient.createNewCard(trelloCardDto);
