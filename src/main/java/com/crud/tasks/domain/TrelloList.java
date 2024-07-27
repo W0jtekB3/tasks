@@ -1,16 +1,18 @@
 package com.crud.tasks.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class TrelloListDto {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class TrelloList {
     private String id;
     private String name;
     private boolean isClosed;
 
-    public TrelloListDto(String id, String name, boolean isClosed) {
+    public TrelloList(String id, String name, boolean isClosed) {
         this.id = id;
         this.name = name;
         this.isClosed = isClosed;
