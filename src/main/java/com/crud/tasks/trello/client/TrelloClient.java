@@ -24,6 +24,7 @@ public class TrelloClient {
     private final RestTemplate restTemplate;
     private final TrelloConfig trelloConfig;
 
+    // Existing method
     public List<TrelloBoardDto> getTrelloBoards() {
         URI url = UriComponentsBuilder
                 .fromHttpUrl(trelloConfig.getTrelloApiEndpoint() + "/members/" + trelloConfig.getTrelloUser() + "/boards")
@@ -48,6 +49,11 @@ public class TrelloClient {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
+    }
+
+    // New method
+    public List<TrelloBoardDto> fetchTrelloBoards() {
+        return getTrelloBoards();
     }
 
     public CreatedTrelloCardDto createNewCard(TrelloCardDto trelloCardDto) {
