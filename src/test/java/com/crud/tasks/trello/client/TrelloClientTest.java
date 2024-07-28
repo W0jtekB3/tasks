@@ -34,7 +34,7 @@ class TrelloClientTest {
     @Test
     public void shouldFetchTrelloBoards() throws URISyntaxException {
         // Given
-        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("http://test.com");
+        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("https://test.com");
         when(trelloConfig.getTrelloAppKey()).thenReturn("test");
         when(trelloConfig.getTrelloToken()).thenReturn("test");
         when(trelloConfig.getTrelloUser()).thenReturn("test");
@@ -42,7 +42,7 @@ class TrelloClientTest {
         TrelloBoardDto[] trelloBoards = new TrelloBoardDto[1];
         trelloBoards[0] = new TrelloBoardDto("test_id", "Kodilla", new ArrayList<>());
 
-        URI uri = new URI("http://test.com/members/test/boards?key=test&token=test&fields=name,id&lists=all");
+        URI uri = new URI("https://test.com/members/test/boards?key=test&token=test&fields=name,id&lists=all");
 
         when(restTemplate.getForObject(uri, TrelloBoardDto[].class)).thenReturn(trelloBoards);
 
@@ -59,12 +59,12 @@ class TrelloClientTest {
     @Test
     public void shouldReturnEmptyList() throws URISyntaxException {
         // Given
-        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("http://test.com");
+        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("https://test.com");
         when(trelloConfig.getTrelloAppKey()).thenReturn("test");
         when(trelloConfig.getTrelloToken()).thenReturn("test");
         when(trelloConfig.getTrelloUser()).thenReturn("test");
 
-        URI uri = new URI("http://test.com/members/test/boards?key=test&token=test&fields=name,id&lists=all");
+        URI uri = new URI("https://test.com/members/test/boards?key=test&token=test&fields=name,id&lists=all");
 
         when(restTemplate.getForObject(uri, TrelloBoardDto[].class)).thenReturn(null);
 
@@ -78,7 +78,7 @@ class TrelloClientTest {
     @Test
     public void shouldCreateCard() throws URISyntaxException {
         // Given
-        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("http://test.com");
+        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("https://test.com");
         when(trelloConfig.getTrelloAppKey()).thenReturn("test");
         when(trelloConfig.getTrelloToken()).thenReturn("test");
 
@@ -89,12 +89,12 @@ class TrelloClientTest {
                 "test_id"
         );
 
-        URI uri = new URI("http://test.com/cards?key=test&token=test&name=Test%20task&desc=Test%20Description&pos=top&idList=test_id");
+        URI uri = new URI("https://test.com/cards?key=test&token=test&name=Test%20task&desc=Test%20Description&pos=top&idList=test_id");
 
         CreatedTrelloCardDto createdTrelloCard = new CreatedTrelloCardDto(
                 "1",
                 "Test task",
-                "http://test.com"
+                "https://test.com"
         );
 
         when(restTemplate.postForObject(uri, null, CreatedTrelloCardDto.class)).thenReturn(createdTrelloCard);
@@ -105,6 +105,6 @@ class TrelloClientTest {
         // Then
         assertEquals("1", newCard.getId());
         assertEquals("Test task", newCard.getName());
-        assertEquals("http://test.com", newCard.getShortUrl());
+        assertEquals("https://test.com", newCard.getShortUrl());
     }
 }
