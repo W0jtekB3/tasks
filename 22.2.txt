@@ -1,0 +1,49 @@
+DROP PROCEDURE IF EXISTS UpdateBestsellers $$
+
+CREATE PROCEDURE UpdateBestsellers()
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE book_id INT;
+    DECLARE rent_count INT;
+
+    -- Declare a cursor to iterate through the BOOKS table
+    DECLARE book_cursor CURSOR FOR
+        SELECT BOOK_ID FROM BOOKS;
+
+    -- Declare a handler to set the done variable to 1 when there are no more rows
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN book_cursor;
+
+    read_loop: LOOP
+        FETCH book_cursor INTO book_id;
+
+        -- If there are no more rows, exit the loop
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Calculate the number of rentals for the current book in the last month
+        SELECT COUNT(*) INTO rent_count
+        FROM RENTS
+        WHERE BOOK_ID = book_id
+          AND RENT_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+
+        -- Update the BESTSELLER column based on the rental count
+        IF rent_count > 2 THEN
+            UPDATE BOOKS SET BESTSELLER = 1 WHERE BOOK_ID = book_id;
+        ELSE
+            UPDATE BOOKS SET BESTSELLER = 0 WHERE BOOK_ID = book_id;
+        END IF;
+    END LOOP;
+
+    CLOSE book_cursor;
+END $$
+
+DELIMITER ;
+
+-- Step 4: Call the procedure
+CALL UpdateBestsellers();
+
+-- Step 5: Verify the changes
+SELECT * FROM BOOKS;
