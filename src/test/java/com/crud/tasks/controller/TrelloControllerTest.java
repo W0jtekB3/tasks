@@ -5,7 +5,7 @@ import com.crud.tasks.domain.TrelloBoardDto;
 import com.crud.tasks.domain.TrelloCardDto;
 import com.crud.tasks.domain.TrelloListDto;
 import com.crud.tasks.trello.facade.TrelloFacade;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +32,20 @@ class TrelloControllerTest {
     @MockBean
     private TrelloFacade trelloFacade;
 
+    @Autowired
+    private ObjectMapper objectMapper; // Add this line
+
     @Test
     void shouldFetchEmptyTrelloBoards() throws Exception {
         // Given
         when(trelloFacade.fetchTrelloBoards()).thenReturn(List.of());
 
-        //When & Then
+        // When & Then
         mockMvc
                 .perform(MockMvcRequestBuilders
                         .get("/v1/trello/boards")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().is(200)) // or isOk()
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
     }
 
@@ -53,7 +56,7 @@ class TrelloControllerTest {
         List<TrelloBoardDto> trelloBoards = List.of(new TrelloBoardDto("1", "Test Task", trelloLists));
         when(trelloFacade.fetchTrelloBoards()).thenReturn(trelloBoards);
 
-        //When & Then
+        // When & Then
         mockMvc
                 .perform(MockMvcRequestBuilders
                         .get("/v1/trello/boards")
@@ -67,26 +70,25 @@ class TrelloControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].lists[0].id", Matchers.is("1")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].lists[0].name", Matchers.is("Test list")));
     }
+
     @Test
     void shouldCreateTrelloCard() throws Exception {
         // Given
-        TrelloCardDto trelloCardDto =
-                new TrelloCardDto("Test", "Test description", "top", "1");
-
-        CreatedTrelloCardDto createdTrelloCardDto =
-                new CreatedTrelloCardDto("232", "Test", "https://test.com");
+        TrelloCardDto trelloCardDto = new TrelloCardDto("Test", "Test description", "top", "1");
+        CreatedTrelloCardDto createdTrelloCardDto = new CreatedTrelloCardDto("232", "Test", "https://test.com");
 
         when(trelloFacade.createCard(any(TrelloCardDto.class))).thenReturn(createdTrelloCardDto);
-        Gson gson = new Gson();
-        String jsonContent = gson.toJson(trelloCardDto);
 
-        //When & Then
+        String jsonContent = objectMapper.writeValueAsString(trelloCardDto); // Use ObjectMapper
+
+        // When & Then
         mockMvc
                 .perform(MockMvcRequestBuilders
                         .post("/v1/trello/cards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content(jsonContent))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is("232")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("Test")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.shortUrl", Matchers.is("https://test.com")));
